@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --brand: #24a873;
+  --brand-light: #46c28c;
+}
+
+body {
+  @apply bg-surface-950 text-gray-100 antialiased;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { @apply bg-surface-900; }
+::-webkit-scrollbar-thumb { @apply bg-surface-700 rounded-full; }
+::-webkit-scrollbar-thumb:hover { @apply bg-surface-600; }
+
+/* Card glass effect */
+.card {
+  @apply bg-surface-900/80 backdrop-blur-sm border border-surface-800 rounded-xl;
+}
+
+.card-hover {
+  @apply card transition-all duration-200 hover:border-surface-700 hover:shadow-lg hover:shadow-brand-500/5;
+}
+
+/* Gradient text */
+.gradient-text {
+  @apply bg-gradient-to-r from-brand-400 to-brand-200 bg-clip-text text-transparent;
+}
+
+/* Status badges */
+.badge {
+  @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium;
+}
+.badge-green { @apply badge bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/20; }
+.badge-red { @apply badge bg-red-500/10 text-red-400 ring-1 ring-red-500/20; }
+.badge-yellow { @apply badge bg-amber-500/10 text-amber-400 ring-1 ring-amber-500/20; }
+.badge-blue { @apply badge bg-blue-500/10 text-blue-400 ring-1 ring-blue-500/20; }
+
+/* Input styling */
+input, select, textarea {
+  @apply bg-surface-800 border border-surface-700 text-gray-100 rounded-lg px-3 py-2
+    placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500
+    transition-colors;
+}
+
+/* Button base */
+.btn {
+  @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium
+    transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2
+    focus:ring-offset-surface-950 disabled:opacity-50 disabled:cursor-not-allowed text-sm;
+}
+.btn-primary {
+  @apply btn bg-brand-600 text-white hover:bg-brand-500 focus:ring-brand-500;
+}
+.btn-secondary {
+  @apply btn bg-surface-800 text-gray-300 border border-surface-700 hover:bg-surface-700 hover:text-white focus:ring-surface-600;
+}
+.btn-danger {
+  @apply btn bg-red-600/10 text-red-400 border border-red-500/20 hover:bg-red-600/20 focus:ring-red-500;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
