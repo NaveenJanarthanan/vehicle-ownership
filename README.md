@@ -36,6 +36,7 @@ A full-stack platform for car enthusiasts to track vehicles, loans, maintenance,
 <table>
 <tr>
 <td width="50%">
+
 ### Dashboard
 - Portfolio value, total equity & monthly cost overview
 - Equity-by-vehicle area chart
