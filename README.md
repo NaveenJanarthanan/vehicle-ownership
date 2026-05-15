@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🚗 GarageIQ
+# GarageIQ
 
 ### Automotive Ownership Intelligence Platform
 
@@ -61,24 +61,24 @@ A full-stack platform for car enthusiasts to track vehicles, loans, maintenance,
 </td>
 <td width="50%">
 
-### 🛡️ Warranty Tracker
+### Warranty Tracker
 - Factory, extended, powertrain & bumper-to-bumper warranties
 - Days/miles remaining with visual expiration alerts
 
-### 📋 Insurance Tracker
+### Insurance Tracker
 - Policy history with premium, deductible & coverage type
 - Current vs. historical policy comparison
 
-### 🏎️ Modifications
+### Modifications
 - Track mods by category (performance, exhaust, suspension, wheels, etc.)
 - Category cost breakdown & total investment tracking
 
-### 🧪 Scenario Simulator
+### Scenario Simulator
 - Adjust extra payments, refinance APR, projection period & depreciation rate
 - Side-by-side current vs. modified equity trajectory
 - Dynamic charts showing projected outcomes
 
-### 🧠 Ownership Insights Engine
+### Ownership Insights Engine
 - **Keep / Sell / Trade / Refinance** recommendations
 - Confidence scores with detailed reasoning & supporting metrics
 - Covers equity analysis, refinance detection, depreciation, warranty expiration, maintenance trends & more
@@ -87,7 +87,7 @@ A full-stack platform for car enthusiasts to track vehicles, loans, maintenance,
 </tr>
 </table>
 
-### 📈 Market Value Scraping
+### Market Value Scraping
 
 - Searches **Cars & Bids** past auctions and **Bring a Trailer** completed listings
 - Calculates average and median prices from recent real-world sales

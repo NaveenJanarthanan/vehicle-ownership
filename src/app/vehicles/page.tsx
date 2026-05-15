@@ -13,6 +13,7 @@ interface Vehicle {
   trim?: string | null;
   color?: string | null;
   mileage: number;
+  imageUrl?: string | null;
   purchasePrice: number;
   loan?: { currentBalance: number; monthlyPayment: number } | null;
   marketValues: { estimatedValue: number }[];
@@ -58,6 +59,7 @@ export default function VehiclesPage() {
                 trim={v.trim}
                 color={v.color}
                 mileage={v.mileage}
+                imageUrl={v.imageUrl}
                 equity={equity}
                 monthlyPayment={v.loan?.monthlyPayment}
                 marketValue={mv}

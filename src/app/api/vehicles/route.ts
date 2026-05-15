@@ -27,22 +27,26 @@ export async function POST(req: Request) {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const body = await req.json();
-  const vehicle = await prisma.vehicle.create({
-    data: {
-      userId: user.id,
-      year: body.year,
-      make: body.make,
-      model: body.model,
-      trim: body.trim || null,
-      vin: body.vin || null,
-      mileage: body.mileage,
-      annualMiles: body.annualMiles || 12000,
-      purchasePrice: body.purchasePrice,
-      purchaseDate: new Date(body.purchaseDate),
-      color: body.color || null,
-      imageUrl: body.imageUrl || null,
-    },
-  });
-
-  return NextResponse.json(vehicle, { status: 201 });
+  try {
+    const vehicle = await prisma.vehicle.create({
+      data: {
+        userId: user.id,
+        year: body.year,
+        make: body.make,
+        model: body.model,
+        trim: body.trim || null,
+        vin: body.vin || null,
+        mileage: body.mileage,
+        annualMiles: body.annualMiles || 12000,
+        purchasePrice: body.purchasePrice,
+        purchaseDate: new Date(body.purchaseDate),
+        color: body.color || null,
+        imageUrl: body.imageUrl || null,
+      },
+    });
+    return NextResponse.json(vehicle, { status: 201 });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 }

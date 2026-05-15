@@ -8,6 +8,7 @@ import InsightCard from '@/components/InsightCard';
 import { EquityAreaChart, CostBreakdownPie } from '@/components/Charts';
 import Link from 'next/link';
 import type { Insight } from '@/lib/insights';
+import { estimateCurrentValue } from '@/lib/calculations';
 
 interface Vehicle {
   id: string;
@@ -18,6 +19,8 @@ interface Vehicle {
   color?: string | null;
   mileage: number;
   purchasePrice: number;
+  purchaseDate: string;
+  imageUrl?: string | null;
   loan?: { currentBalance: number; monthlyPayment: number; originalAmount: number; apr: number } | null;
   marketValues: { estimatedValue: number }[];
   insurancePolicies: { monthlyPremium: number }[];
@@ -57,7 +60,7 @@ export default function DashboardPage() {
   }, []);
 
   const totalPortfolioValue = vehicles.reduce(
-    (sum, v) => sum + (v.marketValues[0]?.estimatedValue ?? v.purchasePrice),
+    (sum, v) => sum + (v.marketValues[0]?.estimatedValue ?? estimateCurrentValue(v.purchasePrice, new Date(v.purchaseDate))),
     0
   );
   const totalDebt = vehicles.reduce((sum, v) => sum + (v.loan?.currentBalance ?? 0), 0);
@@ -79,7 +82,7 @@ export default function DashboardPage() {
   // Chart data
   const equityChartData = vehicles.map((v) => ({
     label: `${v.year} ${v.make}`,
-    marketValue: v.marketValues[0]?.estimatedValue ?? v.purchasePrice,
+    marketValue: v.marketValues[0]?.estimatedValue ?? estimateCurrentValue(v.purchasePrice, new Date(v.purchaseDate)),
     loanBalance: v.loan?.currentBalance ?? 0,
   }));
 
@@ -174,8 +177,8 @@ export default function DashboardPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
           {vehicles.map((v) => {
-            const mv = v.marketValues[0]?.estimatedValue;
-            const equity = mv && v.loan ? mv - v.loan.currentBalance : undefined;
+            const mv = v.marketValues[0]?.estimatedValue ?? estimateCurrentValue(v.purchasePrice, new Date(v.purchaseDate));
+            const equity = v.loan ? mv - v.loan.currentBalance : undefined;
             return (
               <VehicleCard
                 key={v.id}
@@ -186,6 +189,7 @@ export default function DashboardPage() {
                 trim={v.trim}
                 color={v.color}
                 mileage={v.mileage}
+                imageUrl={v.imageUrl}
                 equity={equity}
                 monthlyPayment={v.loan?.monthlyPayment}
                 marketValue={mv}

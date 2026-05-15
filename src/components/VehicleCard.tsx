@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface VehicleCardProps {
   id: string;
@@ -11,22 +12,30 @@ interface VehicleCardProps {
   equity?: number;
   monthlyPayment?: number;
   marketValue?: number;
+  imageUrl?: string | null;
 }
 
 export default function VehicleCard({
-  id, year, make, model, trim, color, mileage, equity, monthlyPayment, marketValue,
+  id, year, make, model, trim, color, mileage, equity, monthlyPayment, marketValue, imageUrl,
 }: VehicleCardProps) {
   return (
-    <Link href={`/vehicles/${id}`} className="card-hover p-5 block animate-fade-in">
+    <Link href={`/vehicles/${id}`} className="card-hover block animate-fade-in overflow-hidden">
+      {imageUrl ? (
+        <div className="relative w-full h-36">
+          <Image src={imageUrl} alt={`${year} ${make} ${model}`} fill className="object-cover" />
+        </div>
+      ) : (
+        <div className="w-full h-36 bg-gradient-to-br from-surface-700 to-surface-800 flex items-center justify-center">
+          <span className="text-4xl font-bold text-surface-600">{make.charAt(0)}</span>
+        </div>
+      )}
+      <div className="p-5">
       <div className="flex items-start justify-between mb-3">
         <div>
           <h3 className="text-lg font-semibold text-white">
             {year} {make} {model}
           </h3>
           {trim && <p className="text-sm text-gray-400">{trim}</p>}
-        </div>
-        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-brand-600 to-brand-800 flex items-center justify-center text-white font-bold text-xs">
-          {make.charAt(0)}
         </div>
       </div>
 
@@ -61,6 +70,7 @@ export default function VehicleCard({
             <p className="text-gray-200 font-medium">${monthlyPayment.toLocaleString()}/mo</p>
           </div>
         )}
+      </div>
       </div>
     </Link>
   );

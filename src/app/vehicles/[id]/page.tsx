@@ -15,8 +15,10 @@ import {
   calculateWarrantyRemaining,
   calculateMonthlyOwnershipCost,
   calculateRemainingPayments,
+  estimateCurrentValue,
 } from '@/lib/calculations';
 import Link from 'next/link';
+import Image from 'next/image';
 import type { Insight } from '@/lib/insights';
 
 interface Vehicle {
@@ -31,6 +33,7 @@ interface Vehicle {
   purchasePrice: number;
   purchaseDate: string;
   color?: string | null;
+  imageUrl?: string | null;
   loan?: {
     originalAmount: number;
     currentBalance: number;
@@ -73,6 +76,8 @@ interface Vehicle {
     id: string;
     estimatedValue: number;
     source: string;
+    url?: string | null;
+    compMileage?: number | null;
     fetchedAt: string;
   }>;
 }
@@ -118,7 +123,7 @@ export default function VehicleDetailPage() {
   }
 
   const v = vehicle;
-  const latestMV = v.marketValues[0]?.estimatedValue ?? v.purchasePrice * 0.85;
+  const latestMV = v.marketValues[0]?.estimatedValue ?? estimateCurrentValue(v.purchasePrice, new Date(v.purchaseDate));
   const equity = v.loan ? calculateEquity(latestMV, v.loan.currentBalance) : latestMV;
   const payoff = v.loan ? calculatePayoffProgress(v.loan.originalAmount, v.loan.currentBalance) : 100;
   const depreciation = calculateDepreciation(v.purchasePrice, latestMV);
@@ -163,6 +168,24 @@ export default function VehicleDetailPage() {
   return (
     <Shell>
       {/* Header */}
+      {v.imageUrl && (
+        <div className="relative w-full h-48 md:h-64 rounded-xl overflow-hidden mb-6">
+          <Image src={v.imageUrl} alt={`${v.year} ${v.make} ${v.model}`} fill className="object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+          <div className="absolute bottom-4 left-4">
+            <h1 className="text-2xl font-bold text-white drop-shadow">{v.year} {v.make} {v.model}</h1>
+            <div className="flex items-center gap-3 mt-1">
+              {v.trim && <span className="text-sm text-gray-200">{v.trim}</span>}
+              {v.color && <span className="badge-blue">{v.color}</span>}
+              <span className="text-sm text-gray-300">{v.mileage.toLocaleString()} mi</span>
+            </div>
+          </div>
+          <button onClick={() => router.back()} className="absolute top-3 left-3 text-sm text-white/80 hover:text-white bg-black/30 rounded px-2 py-1">
+            ← Back
+          </button>
+        </div>
+      )}
+      {!v.imageUrl && (
       <div className="flex items-start justify-between mb-6">
         <div>
           <button onClick={() => router.back()} className="text-sm text-gray-500 hover:text-gray-300 mb-2">
@@ -177,14 +200,8 @@ export default function VehicleDetailPage() {
             <span className="text-sm text-gray-500">{v.mileage.toLocaleString()} mi</span>
           </div>
         </div>
-        <button
-          onClick={fetchMarketValues}
-          className="btn-secondary text-xs"
-          disabled={fetchingMarket}
-        >
-          {fetchingMarket ? 'Fetching...' : '↻ Refresh Market Value'}
-        </button>
       </div>
+      )}
 
       {/* Sub-navigation */}
       <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
@@ -234,6 +251,132 @@ export default function VehicleDetailPage() {
           <StatCard label="Monthly Insurance" value={`$${monthlyInsurance}`} subValue={v.insurancePolicies[0]?.provider || 'N/A'} />
         </div>
       )}
+
+      {/* Market Data Sources */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-lg font-semibold text-white">Market Data Sources</h2>
+          <button
+            onClick={fetchMarketValues}
+            className="btn-secondary text-xs"
+            disabled={fetchingMarket}
+          >
+            {fetchingMarket ? 'Fetching...' : '↻ Refresh'}
+          </button>
+        </div>
+        {v.marketValues.length === 0 ? (
+          <div className="card p-5 text-center">
+            <p className="text-gray-500 text-sm mb-3">No market data yet. Refresh to pull results from Bring a Trailer, AutoTrader, and Cars.com.</p>
+            <div className="flex items-center justify-center flex-wrap gap-4 text-xs text-gray-600">
+              {[
+                { label: 'Bring a Trailer', color: 'bg-blue-500' },
+                { label: 'AutoTrader', color: 'bg-orange-500' },
+                { label: 'Cars.com', color: 'bg-purple-500' },
+              ].map((s) => (
+                <span key={s.label} className="flex items-center gap-1.5">
+                  <span className={`w-2 h-2 rounded-full ${s.color} inline-block`} />
+                  {s.label}
+                </span>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="card overflow-hidden">
+            <div className="px-4 py-2.5 bg-surface-800/50 border-b border-surface-700 flex items-center gap-4 text-xs text-gray-500">
+              <span>Showing {v.marketValues.length} comparable result{v.marketValues.length !== 1 ? 's' : ''}</span>
+              <span className="flex items-center flex-wrap gap-3 ml-auto">
+                {[
+                  { label: 'Bring a Trailer', color: 'bg-blue-500' },
+                  { label: 'AutoTrader', color: 'bg-orange-500' },
+                  { label: 'Cars.com', color: 'bg-purple-500' },
+                ].map((s) => (
+                  <span key={s.label} className="flex items-center gap-1.5">
+                    <span className={`w-2 h-2 rounded-full ${s.color} inline-block`} />
+                    {s.label}
+                  </span>
+                ))}
+              </span>
+            </div>
+            <table className="w-full text-sm">
+              <thead className="bg-surface-800/30">
+                <tr className="text-left text-gray-500">
+                  <th className="px-4 py-2 font-medium">Source</th>
+                  <th className="px-4 py-2 font-medium hidden sm:table-cell">Comp Mileage</th>
+                  <th className="px-4 py-2 font-medium hidden sm:table-cell">Fetched</th>
+                  <th className="px-4 py-2 font-medium text-right">Adj. Price</th>
+                  <th className="px-4 py-2 font-medium text-right hidden sm:table-cell">vs Purchase</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-surface-800">
+                {v.marketValues.map((mv) => {
+                  const diff = mv.estimatedValue - v.purchasePrice;
+                  const sourceConfig: Record<string, { label: string; dot: string; badge: string }> = {
+                    'bring-a-trailer': { label: 'Bring a Trailer', dot: 'bg-blue-500',   badge: 'bg-blue-500/10 text-blue-400' },
+                    'autotrader':      { label: 'AutoTrader',      dot: 'bg-orange-500', badge: 'bg-orange-500/10 text-orange-400' },
+                    'cars-com':        { label: 'Cars.com',        dot: 'bg-purple-500', badge: 'bg-purple-500/10 text-purple-400' },
+                  };
+                  const cfg = sourceConfig[mv.source] ?? { label: mv.source, dot: 'bg-gray-500', badge: 'bg-gray-500/10 text-gray-400' };
+                  const mileDiff = mv.compMileage != null ? mv.compMileage - v.mileage : null;
+                  return (
+                    <tr key={mv.id}>
+                      <td className="px-4 py-2.5">
+                        {mv.url ? (
+                          <a href={mv.url} target="_blank" rel="noopener noreferrer" className={`inline-flex items-center gap-1.5 text-xs font-medium px-2 py-0.5 rounded-full hover:opacity-80 transition-opacity ${cfg.badge}`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
+                            {cfg.label} ↗
+                          </a>
+                        ) : (
+                          <span className={`inline-flex items-center gap-1.5 text-xs font-medium px-2 py-0.5 rounded-full ${cfg.badge}`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
+                            {cfg.label}
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-4 py-2.5 hidden sm:table-cell">
+                        {mv.compMileage != null ? (
+                          <span className="text-xs text-gray-300">
+                            {mv.compMileage.toLocaleString()} mi
+                            {mileDiff !== null && (
+                              <span className={`ml-1.5 ${mileDiff > 0 ? 'text-emerald-400' : mileDiff < 0 ? 'text-red-400' : 'text-gray-500'}`}>
+                                ({mileDiff > 0 ? '+' : ''}{mileDiff.toLocaleString()})
+                              </span>
+                            )}
+                          </span>
+                        ) : (
+                          <span className="text-xs text-gray-600">—</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-2.5 text-gray-400 hidden sm:table-cell text-xs">
+                        {new Date(mv.fetchedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </td>
+                      <td className="px-4 py-2.5 text-right font-semibold text-white">
+                        ${mv.estimatedValue.toLocaleString()}
+                      </td>
+                      <td className="px-4 py-2.5 text-right hidden sm:table-cell">
+                        <span className={`text-xs font-medium ${diff >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                          {diff >= 0 ? '+' : ''}${diff.toLocaleString()}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+              <tfoot className="bg-surface-800/30 border-t border-surface-700">
+                <tr>
+                  <td colSpan={3} className="px-4 py-2.5 text-xs text-gray-500 hidden sm:table-cell">
+                    Average of {v.marketValues.length} result{v.marketValues.length !== 1 ? 's' : ''}
+                    {v.mileage > 0 && <span className="ml-2 text-gray-600">(mileage-adjusted)</span>}
+                  </td>
+                  <td className="px-4 py-2.5 text-right font-bold text-white">
+                    ${Math.round(v.marketValues.reduce((s, m) => s + m.estimatedValue, 0) / v.marketValues.length).toLocaleString()}
+                  </td>
+                  <td className="hidden sm:table-cell" />
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        )}
+      </div>
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">

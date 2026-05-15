@@ -30,7 +30,7 @@ async function main() {
       purchasePrice: 78500,
       purchaseDate: new Date('2022-06-15'),
       color: 'Isle of Man Green',
-      imageUrl: '/cars/bmw-m3.jpg',
+      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/c/c6/2023_BMW_M3_CS.jpg',
     },
   });
 
@@ -121,7 +121,7 @@ async function main() {
       purchasePrice: 115000,
       purchaseDate: new Date('2021-03-20'),
       color: 'GT Silver Metallic',
-      imageUrl: '/cars/porsche-911.jpg',
+      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/5/5f/Porsche_911_Carrera_S_%28992%29_-_2025-11-21.jpg',
     },
   });
 
@@ -205,7 +205,7 @@ async function main() {
       purchasePrice: 56000,
       purchaseDate: new Date('2020-08-10'),
       color: 'Renaissance Red 2.0',
-      imageUrl: '/cars/toyota-supra.jpg',
+      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/d/dd/Toyota_Supra_A91_Edition.jpg',
     },
   });
 

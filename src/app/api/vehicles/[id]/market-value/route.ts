@@ -26,17 +26,18 @@ export async function POST(_req: Request, { params }: { params: { id: string } }
   });
   if (!vehicle) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
-  const result = await getAuctionMarketValue(vehicle.year, vehicle.make, vehicle.model);
+  const result = await getAuctionMarketValue(vehicle.year, vehicle.make, vehicle.model, vehicle.mileage);
 
   const saved = [];
   if (result.averagePrice) {
-    for (const auction of result.results.slice(0, 5)) {
+    for (const auction of result.results.slice(0, 10)) {
       const mv = await prisma.marketValue.create({
         data: {
           vehicleId: vehicle.id,
           estimatedValue: auction.price,
           source: auction.source,
           url: auction.url,
+          compMileage: auction.compMileage ?? null,
         },
       });
       saved.push(mv);

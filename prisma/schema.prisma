@@ -130,6 +130,7 @@ model MarketValue {
   estimatedValue Float
   source         String // cars-and-bids, bring-a-trailer, manual, kbb
   url            String?
+  compMileage    Int?     // Mileage of the comparable vehicle (if available)
   fetchedAt      DateTime @default(now())
 
   @@index([vehicleId])
