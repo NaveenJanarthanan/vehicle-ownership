@@ -37,24 +37,24 @@ A full-stack platform for car enthusiasts to track vehicles, loans, maintenance,
 <tr>
 <td width="50%">
 
-### 📊 Dashboard
+### Dashboard
 - Portfolio value, total equity & monthly cost overview
 - Equity-by-vehicle area chart
 - Annual cost breakdown pie chart
 - Top ownership insights across all vehicles
 
-### 🚘 Vehicle Detail
+### Vehicle Detail
 - Market value history & maintenance-by-category charts
 - Warranty status with expiration alerts
 - Modification inventory with category breakdown
 - One-click market value refresh from auction sites
 
-### 💰 Loan Tracker
+### Loan Tracker
 - Payoff progress bar with interest paid & remaining payments
 - 24-month equity projection chart (market value vs. loan balance)
 - Edit loan terms at any time
 
-### 🔧 Maintenance History
+### Maintenance History
 - Full service log (date, type, description, cost, mileage, shop)
 - Cost-by-category bar chart with running totals
 
